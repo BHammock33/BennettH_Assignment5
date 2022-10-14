@@ -50,7 +50,7 @@ public class CustomArrayList<T> implements CustomList<T> {
 	}
 
 	private Object[] grow() {
-		return grow(size + 1);
+		return grow((size*2));
 	}
 
 	@Override
