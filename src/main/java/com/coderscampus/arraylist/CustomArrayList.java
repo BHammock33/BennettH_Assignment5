@@ -1,56 +1,25 @@
 package com.coderscampus.arraylist;
 
-import java.util.Arrays; 
-import java.util.Objects;
+import java.util.Arrays;
 
 public class CustomArrayList<T> implements CustomList<T> {
 	private int baseSize = 10;
 	private int size;
-	Object[] items = new Object[size];
-	Object[] emptyArray = {};
-	Object[] intermediateArray = new Object[baseSize];
-
-	public CustomArrayList() {
-		this.intermediateArray = emptyArray;
-	}
-
-	public Object[] toArray() {
-		return Arrays.copyOf(intermediateArray, baseSize);
-	}
-
-	private void add(T item, Object[] intermediateArray, int size2) {
-		if (size2 == intermediateArray.length)
-			intermediateArray = grow();
-		intermediateArray[size2] = item;
-		size = size2 + 1;
-	}
+	Object[] items = new Object[baseSize];
 
 	@Override
 	public boolean add(T item) {
-		int i;
-		for (i = 0; i < size; i++) {
-			if (item.equals(intermediateArray[i])) {
-				return false;
-			}
+		if (items.length == size) {
+			grow();
 		}
-		add(item, intermediateArray, size);
+		items[size] = item;
+		size += 1;
 		return true;
-
 	}
 
-	private Object[] grow(int minCap) {
-		int oldCap = intermediateArray.length;
-		if (oldCap > 0 || intermediateArray != emptyArray) {
-			int newCap = CustomArrayList.newLenght(oldCap, minCap - oldCap, oldCap >> 1);
-			return intermediateArray = Arrays.copyOf(intermediateArray, newCap);
-		} else {
-			return intermediateArray = new Object[Math.max(baseSize, minCap)];
-		}
-
-	}
-
-	private Object[] grow() {
-		return grow((size*2));
+	private void grow() {
+		Object[] bigArray = Arrays.copyOf(items, items.length * 2);
+		items = bigArray;
 	}
 
 	@Override
@@ -59,22 +28,40 @@ public class CustomArrayList<T> implements CustomList<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	T intermediateArray(int index) {
-		return (T) intermediateArray[index];
+	@Override
+	public T get(int index) {
+		return (T) items[index];
 	}
 
 	@Override
-	public T get(int index) {
-		Objects.checkIndex(index, size);
-		return intermediateArray(index);
+	public boolean add(int index, T item) throws IndexOutOfBoundsException {
+		Object[] shiftedArray = Arrays.copyOf(items, (items.length) + 1);
+		if (shiftedArray.length == size) {
+			grow();
+		}
+		for (int i = 0; i < index; i++) {
+			shiftedArray[i] = items[i];
+		}
+		shiftedArray[index] = item;
+		for (int i = index + 1; i < items.length; i++)
+			shiftedArray[i] = items[i - 1];
+		items = Arrays.copyOf(shiftedArray, shiftedArray.length);
+		return true;
 	}
 
-	private static int newLenght(int oldLenght, int minGrowth, int perfGrowth) {
-		int prefLength = oldLenght + Math.max(minGrowth, perfGrowth);
-		if (0 < prefLength && prefLength <= 200) {
-			return prefLength;
-		} else {
-			return 1000;
+	@SuppressWarnings("unchecked")
+	@Override
+	public T remove(int index) throws IndexOutOfBoundsException {
+		Object removedItem = items[index];
+		Object[] shrinkArray = new Object[size + 1];
+
+		for (int i = 0; i < index; i++) {
+			shrinkArray[i] = items[i];
 		}
+		for (int i = index + 1; i < shrinkArray.length; i++)
+			shrinkArray[i - 1] = items[i];
+		items = Arrays.copyOf(shrinkArray, shrinkArray.length);
+		return (T) removedItem;
 	}
+
 }
