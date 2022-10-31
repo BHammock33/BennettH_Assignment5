@@ -21,13 +21,14 @@ class CustomArrayListTest {
 		// testing if the other items are shifting
 		assertEquals(movedItem, sut.get(4));
 	}
+	
+	
 
 	@Test
 	void should_add_item_at_index() {
 		CustomList<Integer> sut = new CustomArrayList<>();
 		populateList(sut);
-		int movedItem = 6;
-		// 6 would be at index 6 until pushed to 7 by insertion of 3
+		int movedItem = 7;
 		sut.add(6, 3);
 		// test add
 		assertEquals(3, sut.get(6));
@@ -59,13 +60,22 @@ class CustomArrayListTest {
 		populateList(sut);
 		int size = sut.getSize();
 
-		assertEquals(size, 15);
+		assertEquals(size, 14);
 	}
 
 	private void populateList(CustomList<Integer> sut) {
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 10; i++) {
 			sut.add(i);
 		}
+//		sut.remove(9);
+		sut.add(1000);
+		sut.add(9, 1000);
+		sut.add(6, 2000);
+		sut.add(6, 3000);
+		sut.remove(9);
+		sut.remove(10);
+		sut.add(5000);
+		sut.add(9000);
 	}
 
 }
